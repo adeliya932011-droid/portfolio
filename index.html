@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Аделия Морунова | Python Dev • Game Designer • 14y/o Prodigy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            --bg-secondary: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-glow: rgba(255, 255, 255, 0.1);
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --accent-gradient: linear-gradient(135deg, #ec4899 0%, #8b5cf6 50%, #06b6d4 100%);
+            --accent-glow: rgba(236, 72, 153, 0.5);
+            --border-glow: rgba(59, 130, 246, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Particle Background */
+        #particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 20% 80%, rgba(120,119,198,0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(255,119,198,0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 40%, rgba(59,130,246,0.2) 0%, transparent 50%);
+        }
+
+        .particle {
+            position: absolute;
+            background: var(--glass-glow);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1rem 0;
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            border-bottom: 1px solid var(--glass-glow);
+            z-index: 1000;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: var(--text-primary);
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            font-size: 0.95rem;
+            border-radius: 50px;
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-glow);
+        }
+
+        nav a:hover {
+            background: var(--accent-gradient);
+            box-shadow: 0 10px 40px var(--accent-glow);
+            transform: translateY(-4px);
+            border-color: transparent;
+        }
+
+        /* Sections */
+        section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 120px 5% 80px;
+            scroll-snap-align: start;
+            position: relative;
+            overflow: hidden; /* Added for potential background effects */
+        }
+
+        /* Hero */
+        #hero {
+            text-align: center;
+            background: transparent;
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 8vw, 7rem);
+            font-weight: 900;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            filter: drop-shadow(0 0 40px var(--accent-glow));
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            0% { filter: drop-shadow(0 0 40px var(--accent-glow)); }
+            100% { filter: drop-shadow(0 0 60px var(--accent-glow)); }
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            font-weight: 400;
+            color: var(--text-secondary);
+            margin-bottom: 4rem;
+            max-width: 600px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .stat-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-glow);
+            border-radius: 24px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s;
+        }
+
+        .stat-card:hover::before {
+            left: 100%;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-12px) scale(1.05);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+            border-color: var(--accent-glow);
+        }
+
+        .stat-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-number {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        /* About */
+        #about {
+            background: linear-gradient(135deg, rgba(30,58,138,0.3) 0%, rgba(15,15,35,0.8) 100%);
+        }
+
+        .section-title {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 800;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 3rem;
+            position: relative;
+            text-align: center; /* Center align title */
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--accent-gradient);
+            border-radius: 2px;
+        }
+
+        .about-content {
+            max-width: 900px;
+            font-size: 1.25rem;
+            line-height: 1.8;
+            margin-bottom: 4rem;
+            text-align: center; /* Center align content */
+            color: var(--text-secondary);
+        }
+
+        .about-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1.5rem;
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        .skill-tag {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-glow);
+            border-radius: 50px;
+            padding: 1.25rem 2rem;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            overflow: hidden;
+            cursor: default;
+            display: flex; /* Align icon and text */
+            align-items: center;
+            justify-content: center; /* Center content */
+            text-align: center;
+        }
+
+        .skill-tag:hover {
+            background: var(--accent-gradient);
+            transform: translateY(-8px) rotate(2deg);
+            box-shadow: 0 20px 50px var(--accent-glow);
+            border-color: transparent;
+        }
+
+        .skill-tag i {
+            margin-right: 0.75rem;
+            font-size: 1.2rem;
+        }
+
+        /* Projects */
+        #projects {
+            background: linear-gradient(135deg, rgba(15,15,35,0.9) 0%, rgba(30,58,138,0.7) 100%);
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 3rem;
+            max-width: 1400px;
+            width: 100%;
+        }
+
+        .project-card {
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-glow);
+            border-radius: 32px;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            cursor: pointer;
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--accent-gradient);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .project-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .project-card:hover {
+            transform: translateY(-25px) scale(1.02);
+            box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+            border-color: var(--border-glow);
+        }
+
+        .project-image {
+            height: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(236,72,153,0.2) 0%, rgba(139,92,246,0.2) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-image i {
+            font-size: 5.5rem;
+            z-index: 2;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .project-card:hover .project-image i {
+            transform: scale(1.3) rotate(360deg);
+            filter: drop-shadow(0 0 30px var(--accent-glow));
+        }
+
+        .project-content {
+            padding: 2.5rem;
+        }
+
+        .project-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .project-desc {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            line-height: 1.7;
+            margin-bottom: 1.75rem;
+        }
+
+        .project-tech {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+
+        .tech-tag {
+            background: var(--glass-glow);
+            color: var(--text-primary);
+            padding: 0.5rem 1.25rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .project-card:hover .tech-tag {
+            background: var(--accent-gradient);
+            border-color: rgba(255,255,255,0.2);
+        }
+
+        /* Buttons */
+        .btn {
+            background: var(--accent-gradient);
+            color: white;
+            padding: 1rem 2.25rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            box-shadow: 0 10px 40px var(--accent-glow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 20px 60px var(--accent-glow);
+        }
+
+        /* Contact */
+        #contact {
+            background: var(--bg-secondary);
+            position: relative;
+            overflow: hidden;
+            display: flex; /* Flexbox for centering content */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #contact::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><radialGradient id="stars" cx="50%" cy="50%"><stop offset="0%" stop-color="%23ffffff" stop-opacity="0.15"><animate attributeName="stop-opacity" values="0.15;0.4;0.15" dur="4s" repeatCount="indefinite"/></stop><stop offset="100%" stop-color="%23ffffff" stop-opacity="0"/></radialGradient></defs><circle cx="20" cy="20" r="1.5" fill="url(%23stars)"><animate attributeName="r" values="1.5;2.2;1.5" dur="3s" repeatCount="indefinite"/></circle><circle cx="80" cy="30" r="1" fill="url(%23stars)"><animate attributeName="r" values="1;1.6;1" dur="3.5s" repeatCount="indefinite"/></circle><circle cx="50" cy="80" r="1.8" fill="url(%23stars)"><animate attributeName="r" values="1.8;2.5;1.8" dur="4s" repeatCount="indefinite"/></circle></svg>') repeat;
+            animation: twinkle 6s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.1); }
+        }
+
+        .contact-title {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 800;
+            text-shadow: 0 0 40px rgba(255,255,255,0.6);
+            margin-bottom: 1.5rem;
+            z-index: 1;
+            position: relative;
+            text-align: center;
+        }
+
+        .contact-subtitle {
+            font-size: 1.3rem;
+            max-width: 700px;
+            margin-bottom: 4rem;
+            color: var(--text-secondary);
+            z-index: 1;
+            position: relative;
+            text-align: center;
+        }
+
+        .contact-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1000px;
+            width: 100%;
+            z-index: 1;
+            position: relative;
+            justify-items: center; /* Center items within grid */
+        }
+
+        .contact-links a {
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-glow);
+            border-radius: 24px;
+            padding: 2.5rem 2rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            font-size: 1.2rem;
+            font-weight: 500;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            width: 100%; /* Make links take full width of grid item */
+            max-width: 320px; /* Optional: limit max width */
+        }
+
+        .contact-links a:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+            border-color: var(--accent-glow);
+        }
+
+        .contact-links i {
+            font-size: 2rem;
+            width: 2.5rem;
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            nav {
+                gap: 1rem;
+            }
+            nav a {
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+            .stats-grid, .projects-grid, .skills-grid, .contact-links {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            section {
+                padding: 100px 5% 60px;
+            }
+            .hero-subtitle br { /* Ensure line breaks are handled well on mobile */
+                display: block;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--glass);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-gradient);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div id="particles"></div>
+
+    <header>
+        <nav>
+            <a href="#hero"><i class="fas fa-rocket"></i> Home</a>
+            <a href="#about"><i class="fas fa-user-astronaut"></i> About</a>
+            <a href="#projects"><i class="fas fa-cubes"></i> Projects</a>
+            <a href="#contact"><i class="fas fa-paper-plane"></i> Contact</a>
+        </nav>
+    </header>
+
+    <section id="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Adelia Morunova</h1>
+            <p class="hero-subtitle">14y/o Python Dev • Game Designer • Hardware Hacker<br><span style="font-size: 0.8em; opacity: 0.7;">Crafting Digital Magic Since 10</span></p>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fab fa-python"></i></div>
+                    <div class="stat-number">60+</div>
+                    <div>Python Projects</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-gamepad"></i></div>
+                    <div class="stat-number">15</div>
+                    <div>Games Built</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-microchip"></i></div>
+                    <div class="stat-number">10+</div>
+                    <div>Hardware Hacks</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="about">
+        <h2 class="section-title">Code. Create. Conquer.</h2>
+        <div class="about-content">
+            <p>Hailing from Al'met'yevsk with a burning passion for technology, I'm a 14-year-old developer who has been coding since the age of 10. I specialize in Python, with a keen interest in micro-controllers like micro:bit and Arduino, turning complex ideas into tangible creations.</p>
+            <p>When I'm not diving deep into code, I'm exploring the realms of pixel art and crafting atmospheric psychological horror games. I'm always eager for new freelance opportunities, collaborative projects, and challenges that push the boundaries of innovation.</p>
+        </div>
+        <div class="skills-grid">
+            <!-- Skills are kept as per original -->
+            <div class="skill-tag"><i class="fab fa-python"></i>Python</div>
+            <div class="skill-tag"><i class="fas fa-eye"></i>OpenCV</div>
+            <div class="skill-tag"><i class="fas fa-microchip"></i>micro:bit</div>
+            <div class="skill-tag"><i class="fas fa-plug"></i>Arduino</div>
+            <div class="skill-tag">Godot</div>
+            <div class="skill-tag">Unity</div>
+            <div class="skill-tag"><i class="fas fa-paint-brush"></i>Figma</div>
+        </div>
+    </section>
+
+    <section id="projects">
+        <h2 class="section-title">Portfolio That Pops</h2>
+        <div class="projects-grid">
+            <!-- Projects section is kept as per original -->
+            <div class="project-card">
+                <div class="project-image"><i class="fas fa-car"></i></div>
+                <div class="project-content">
+                    <div class="project-title">Tilt Car Battle</div>
+                    <div class="project-desc">Баттлер машин на micro:bit! Два танка стреляют, собирают монеты, AI врагов. Управление наклоном + коллизии.</div>
+                    <div class="project-tech">
+                        <span class="tech-tag">micro:bit JS</span>
+                        <span class="tech-tag">Game AI</span>
+                    </div>
+                    <a href="https://makecode.microbit.org/#editor" target="_blank" class="btn"><i class="fas fa-external-link-alt"></i> Demo</a>
+                </div>
+            </div>
+            <div class="project-card">
+                <div class="project-image"><i class="fas fa-lock"></i></div>
+                <div class="project-content">
+                    <div class="project-title">Arduino Code Lock</div>
+                    <div class="project-desc">Умная приставка в Tinkerkad на C++.</div>
+                    <div class="project-tech">
+                        <span class="tech-tag">Arduino C++</span>
+                        <span class="tech-tag">Electronics</span>
+                    </div>
+                    <a href="https://www.tinkercad.com/things/4YhrUS23S2r-copy-of-10lab-sozdanie-lyuboj-igry-na-arduino/editel?returnTo=%2Fthings%2F4YhrUS23S2r-copy-of-10lab-sozdanie-lyuboj-igry-na-arduino&sharecode=AjijjSptehueqkVSwhk7PikixfK2BJA53tx5gpxlPfo" class="btn"><i class="fab fa-github"></i> GitHub</a>
+                </div>
+            </div>
+            <div class="project-card">
+                <div class="project-image"><i class="fas fa-ghost"></i></div>
+                <div class="project-content">
+                    <div class="project-title">Стекловату ели тихо</div>
+                    <div class="project-desc">Психологический хоррор: sanity meter, procedural rooms, jump-scares. Point&click с нелинейным сюжетом.[cite:5]</div>
+                    <div class="project-tech">
+                        <span class="tech-tag">Godot</span>
+                        <span class="tech-tag">Horror</span>
+                    </div>
+                    <a href="http://friv.cm/google-doodle-halloween/" class="btn"><i class="fas fa-gamepad"></i> Play</a>
+                </div>
+            </div>
+            <div class="project-card">
+                <div class="project-image"><i class="fas fa-rocket"></i></div>
+                <div class="project-content">
+                    <div class="project-title">Standoff 3 Fly</div>
+                    <div class="project-desc">Аркадный шутер: jetpack полёты, мультиплеер, скины. Неоновый мир с быстрым геймплеем.[cite:6]</div>
+                    <div class="project-tech">
+                        <span class="tech-tag">Unity C#</span>
+                        <span class="tech-tag">Multiplayer</span>
+                    </div>
+                    <a href="#" class="btn"><i class="fas fa-download"></i> Download</a>
+                </div>
+            </div>
+            <div class="project-card">
+                <div class="project-image"><i class="fas fa-island-tropical"></i></div>
+                <div class="project-content">
+                    <div class="project-title">Escape PSHTEIN</div>
+                    <div class="project-desc">1vs4 кооп-хоррор на Мадагаскаре. Пазлы, дрон-патруль, тепловизор охотника.[cite:7]</div>
+                    <div class="project-tech">
+                        <span class="tech-tag">Unreal Engine</span>
+                        <span class="tech-tag">Co-op</span>
+                    </div>
+                    <a href="#" class="btn"><i class="fas fa-users"></i> Demo</a>
+                </div>
+            </div>
+            <div class="project-card">
+                <div class="project-image"><i class="fas fa-video"></i></div>
+                <div class="project-content">
+                    <div class="project-title">OpenCV Analyzer</div>
+                    <div class="project-desc">Детекция движения, object tracking в реал-тайм. Python скрипты для видеообработки.</div>
+                    <div class="project-tech">
+                        <span class="tech-tag">Python OpenCV</span>
+                        <span class="tech-tag">Computer Vision</span>
+                    </div>
+                    <a href="https://github.com/adeliya-morunova/opencv-projects" target="_blank" class="btn"><i class="fab fa-github"></i> Code</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact">
+        <h2 class="contact-title">Let's Build Something Epic</h2>
+        <p class="contact-subtitle">Open for freelance, internships, game jams, hardware hacks & Python wizardry. Slide into my DMs 🚀</p>
+        <div class="contact-links">
+            <a href="mailto:adeliya.morunova@example.com"><i class="fas fa-envelope"></i> adeliya.morunova@example.com</a>
+            <a href="https://t.me/adeliya_dev" target="_blank"><i class="fab fa-telegram"></i> Telegram</a>
+            <a href="https://github.com/adeliya-morunova" target="_blank"><i class="fab fa-github"></i> GitHub</a>
+            <a href="https://vk.com/adeliya_dev" target="_blank"><i class="fab fa-vk"></i> VK</a>
+        </div>
+    </section>
+
+    <script>
+        // Advanced Particle System
+        function createParticles() {
+            const particleCount = 50;
+            const particlesContainer = document.getElementById('particles');
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.width = particle.style.height = (Math.random() * 4 + 1) + 'px';
+                particle.style.animationDuration = (Math.random() * 20 + 15) + 's';
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Parallax & Smooth Scrolling
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            // Parallax effect for hero section is removed to avoid conflicts with scroll snap and particle background
+            // const parallax = document.querySelector('#hero');
+            // parallax.style.transform = `translateY(${scrolled * 0.3}px)`;
+            
+            // Dynamic nav opacity and style
+            const sections = document.querySelectorAll('section');
+            let currentSectionIndex = -1; // Initialize to -1 to handle cases before the first section
+            
+            sections.forEach((section, index) => {
+                // Adjust threshold for when the link should be active
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (window.scrollY >= sectionTop - sectionHeight * 0.5) {
+                    currentSectionIndex = index;
+                }
+            });
+            
+            document.querySelectorAll('nav a').forEach((link, index) => {
+                if (index === currentSectionIndex) {
+                    link.style.opacity = '1';
+                    link.style.transform = 'scale(1.05)';
+                    link.style.boxShadow = '0 10px 40px var(--accent-glow)'; // Add glow on active link
+                    link.style.borderColor = 'transparent'; // Remove border on active link
+                } else {
+                    link.style.opacity = '0.6';
+                    link.style.transform = 'scale(1)';
+                    link.style.boxShadow = 'none'; // Remove glow on inactive links
+                    link.style.borderColor = 'var(--glass-glow)'; // Restore border color
+                }
+            });
+        });
+
+        // Staggered Animations using Intersection Observer
+        const observerOptions = {
+            threshold: 0.2, // Trigger when 20% of the element is visible
+            rootMargin: '0px 0px -50px 0px' // Start animation slightly before element enters viewport
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                    // Note: Setting individual delays here might override the CSS transitions.
+                    // It's often better to rely on CSS transitions or stagger them via JS if needed.
+                    // For simplicity, we'll rely on the default transition timing.
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements for staggered animations
+        document.querySelectorAll('.stat-card, .skill-tag, .project-card').forEach((el, index) => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(60px)';
+            el.style.transition = 'all 0.8s cubic-bezier(0.23, 1, 0.32, 1)';
+            // Optional: Add a slight delay for staggering effect if CSS transitions aren't enough
+            el.style.transitionDelay = `${index * 0.08}s`; 
+            observer.observe(el);
+        });
+
+        // Observe hero section for initial animation
+        const heroObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.querySelector('.hero-title').classList.add('animate-title');
+                    entry.target.querySelector('.hero-subtitle').classList.add('animate-subtitle');
+                    heroObserver.unobserve(entry.target); // Only animate once
+                }
+            });
+        }, { threshold: 0.5 });
+        heroObserver.observe(document.querySelector('#hero'));
+
+        // Add animation class to hero title and subtitle for better control
+        const heroTitle = document.querySelector('.hero-title');
+        const heroSubtitle = document.querySelector('.hero-subtitle');
+        if(heroTitle) heroTitle.classList.add('animate-title');
+        if(heroSubtitle) heroSubtitle.classList.add('animate-subtitle');
+
+        // Apply animation keyframes dynamically if needed, or rely on CSS
+        // For this case, CSS keyframes are already defined.
+
+        // Initialize particles
+        createParticles();
+    </script>
+</body>
+</html>
